@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StudySync Clone with Upload Feature</title>
+<style>
+  
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #181818;
+    color: #fff;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  a, button {
+    user-select: none;
+  }
+
+  /* -- LOGIN PAGE -- */
+  #loginPage {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    background: 
+      linear-gradient(rgba(24,24,24,0.75), rgba(24,24,24,0.75)),
+      url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1471&q=80') no-repeat center center/cover;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #loginBox {
+    background: rgba(32, 32, 32, 0.85);
+    padding: 40px 36px 36px;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    text-align: center;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  #loginBox h2 {
+    margin-bottom: 24px;
+    font-weight: 700;
+    color: #fff;
+    font-size: 28px;
+    letter-spacing: 1.4px;
+  }
+
+  #loginBox form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #loginBox input[type="text"],
+  #loginBox input[type="password"] {
+    background: #121212;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #eee;
+    transition: border-color 0.3s ease;
+  }
+
+  #loginBox input[type="text"]:focus,
+  #loginBox input[type="password"]:focus {
+    border-color: #ff0000;
+    outline: none;
+  }
+
+  #loginBox button {
+    background: #ff0000;
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  #loginBox button:hover {
+    background: #bb0000;
+  }
+
+  #loginError {
+    color: #ff6666;
+    font-size: 14px;
+    margin-bottom: 12px;
+    height: 18px;
+  }
+
+  /* -- MAIN APP -- */
+  #app {
+    display: none;
+    height: 100vh;
+    flex-direction: column;
+  }
+
+  header {
+    background-color: #202020;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px 0 16px;
+    position: fixed;
+    width: 100%;
+    z-index: 20;
+  }
+
+  .logo {
+    font-weight: 700;
+    font-size: 24px;
+    color: #ff0000;
+    cursor: pointer;
+    user-select: none;
+    margin-right: 16px;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Hamburger */
+  #hamburger {
+    display: none;
+    cursor: pointer;
+    font-size: 28px;
+    color: #fff;
+    margin-right: 12px;
+    padding: 4px 6px 2px;
+    user-select: none;
+  }
+  #hamburger:hover {
+    color: #ff0000;
+  }
+
+  /* Search bar */
+  .search-bar {
+    flex-grow: 1;
+    max-width: 600px;
+    display: flex;
+    margin-right:12px;
+  }
+
+  .search-bar input {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 2px 0 0 2px;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .search-bar button {
+    background-color: #303030;
+    border: none;
+    border-radius: 0 2px 2px 0;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s ease;
+  }
+
+  .search-bar button:hover {
+    background-color: #555;
+  }
+
+  /* Icons container on right */
+  .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Notification Bell */
+  #notifications {
+    position: relative;
+    cursor: pointer;
+    font-size: 22px;
+    color: #aaa;
+    user-select: none;
+  }
+  #notifications:hover {
+    color: #fff;
+  }
+  #notifications[data-count]:after {
+    content: attr(data-count);
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff0000;
+    border-radius: 50%;
+    font-size: 10px;
+    padding: 2px 6px;
+    color: white;
+    font-weight: 700;
+  }
+
+  /* Dark/Light toggle */
+  #colorModeToggle {
+    cursor: pointer;
+    font-size: 22px;
+    color: #aaa;
+    user-select: none;
+    transition: color 0.2s ease;
+  }
+  #colorModeToggle:hover {
+    color: #fff;
+  }
+
+  /* User Icon */
+  .user-icon {
+    margin-left: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 18px;
+    user-select: none;
+    position: relative;
+    color: white;
+  }
+
+  /* Username display on right of icon */
+  #usernameDisplay {
+    margin-left: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ddd;
+    user-select: none;
+  }
+
+  /* Upload button */
+  #uploadBtn {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    background-color: #ff0000;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  #uploadBtn:hover {
+    background-color: #cc0000;
+  }
+
+  /* User dropdown */
+  .user-dropdown {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: #222;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+    display: none;
+    flex-direction: column;
+    min-width: 140px;
+    z-index: 20;
+  }
+  .user-dropdown.show {
+    display: flex;
+  }
+  .user-dropdown button {
+    background: none;
+    color: #fff;
+    padding: 12px 16px;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+  }
+  .user-dropdown button:hover {
+    background-color: #444;
+  }
+
+  /* Layout */
+  .container {
+    display: flex;
+    flex-grow: 1;
+    margin-top: 56px;
+    overflow: hidden;
+    height: calc(100vh - 56px);
+  }
+
+  /* Sidebar */
+  aside {
+    width: 240px;
+    background-color: #202020;
+    padding-top: 12px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+  }
+
+  /* Closed state for mobile */
+  aside.closed {
+    transform: translateX(-260px);
+  }
+
+  /* Sidebar sections visually separated */
+  .sidebar-section {
+    border-bottom: 1px solid #333;
+    margin-bottom: 8px;
+  }
+  .sidebar-section:last-child {
+    border: none;
+    margin-bottom: 0;
+  }
+
+  .sidebar-section-title {
+    font-size: 13px;
+    color: #aaa;
+    padding: 10px 24px 4px 24px;
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  .sidebar-item {
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    color: #ccc;
+    user-select: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .sidebar-item:hover, .sidebar-item.active {
+    background-color: #383838;
+    color: #fff;
+  }
+
+  /* Main content */
+  main {
+    flex-grow: 1;
+    background-color: #121212;
+    padding: 16px 24px 24px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* Sorting Bar */
+  .sorting-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+  #sortSelect {
+    background: #222;
+    color: #eee;
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+  }
+  #sortSelect:hover, #sortSelect:focus {
+    outline: none;
+    background: #333;
+  }
+
+  /* Trending row (horizontal scroll) */
+  .trending-row {
+    margin-bottom: 20px;
+  }
+  .trending-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .trending-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .trending-item {
+    background-color: #222;
+    border-radius: 8px;
+    flex: 0 0 160px;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    transition: transform 0.2s ease;
+  }
+  .trending-item:hover, .trending-item:focus-visible {
+    outline: none;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(255,0,0,0.7);
+  }
+  .trending-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .trending-info {
+    padding: 8px 10px;
+  }
+  .trending-title-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 6px 0;
+    line-height: 1.2em;
+    height: 2.4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .trending-channel {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  /* Video grid */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 16px;
+  }
+
+  /* Video card */
+  .video-card {
+    cursor: pointer;
+    background-color: #222;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    transition: transform 0.2s ease;
+    position: relative;
+  }
+
+  .video-card:hover, .video-card:focus-visible {
+    outline: none;
+    transform: scale(1.04);
+    box-shadow: 0 6px 15px rgba(255,0,0,0.7);
+  }
+
+  .thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    background-color: #000;
+  }
+
+  /* Video duration overlay */
+  .duration {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    user-select: none;
+  }
+
+  .video-info {
+    padding: 12px;
+  }
+
+  .video-title {
+    font-weight: 500;
+    font-size: 16px;
+    margin: 0 0 6px 0;
+    line-height: 1.2em;
+    height: 2.4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .video-channel {
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 2px;
+  }
+
+  .video-views, .upload-date {
+    font-size: 12px;
+    color: #aaa;
+    margin-right: 10px;
+  }
+
+  .video-stats {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 12px 4px rgba(255,255,255,0.2);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    line-height: 24px;
+    text-align: center;
+    transition: background 0.2s ease;
+    user-select: none;
+  }
+
+  .modal-close:hover {
+    background: rgba(255,255,255,0.4);
+  }
+
+  /* Upload Modal */
+  #uploadModal .modal-content {
+    max-width: 480px;
+    aspect-ratio: auto;
+    padding: 24px;
+    background: #222;
+  }
+
+  #uploadModal label {
+    display: block;
+    font-size: 14px;
+    color: #ddd;
+    margin: 8px 0 4px;
+  }
+
+  #uploadModal input, #uploadModal select {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #121212;
+    color: #eee;
+  }
+
+  #uploadModal button {
+    margin-top: 20px;
+    background: #ff0000;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+  }
+  #uploadModal button:hover {
+    background: #cc0000;
+  }
+
+  #uploadModalClose {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    user-select: none;
+    line-height: 24px;
+    text-align: center;
+    transition: background 0.2s ease;
+  }
+  #uploadModalClose:hover {
+    background: rgba(255,255,255,0.4);
+  }
+
+  /* Scrollbar Styles */
+  aside::-webkit-scrollbar, main::-webkit-scrollbar, .trending-list::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  aside::-webkit-scrollbar-thumb, main::-webkit-scrollbar-thumb, .trending-list::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+  }
+  aside::-webkit-scrollbar-track, main::-webkit-scrollbar-track, .trending-list::-webkit-scrollbar-track {
+    background: #202020;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 920px) {
+    .trending-row {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    aside {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      height: calc(100vh - 56px);
+      z-index: 15;
+      background: #202020;
+      transform: translateX(-260px);
+      box-shadow: 2px 0 15px rgba(0,0,0,0.6);
+    }
+    aside.open {
+      transform: translateX(0);
+    }
+    main {
+      padding: 12px 12px 24px;
+    }
+    #hamburger {
+      display: block;
+    }
+    header {
+      padding-right: 8px;
+    }
+    .logo {
+      margin-right: 8px;
+    }
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  /* Screen reader only */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    border: 0 !important;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" role="main" aria-label="Login page">
+  <div id="loginBox" tabindex="-1" aria-live="polite">
+    <h2>Sign in to StudySync</h2>
+    <div id="loginError" aria-live="assertive" ></div>
+    <form id="loginForm" novalidate>
+      <input type="text" id="username" name="username" placeholder="Username" autocomplete="username" aria-label="Username" required />
+      <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" aria-label="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" role="application" aria-label="StudySync clone interface">
+  <header>
+    <div id="hamburger" tabindex="0" aria-label="Toggle sidebar" title="Toggle sidebar">&#9776;</div>
+    <div class="logo" tabindex="0" aria-label="StudySync Clone logo">StudySync</div>
+    <form class="search-bar" role="search" aria-label="Video Search">
+      <input type="text" placeholder="Search" aria-label="Search videos" id="searchInput" autocomplete="off" />
+      <button type="submit" aria-label="Search Button">🔍</button>
+    </form>
+    <div class="header-icons">
+      <button id="uploadBtn" title="Upload Video" aria-label="Upload Video">⬆️ Upload</button>
+      <div id="notifications" title="Notifications" aria-label="Notifications" tabindex="0" data-count="3">🔔</div>
+      <div id="colorModeToggle" title="Toggle Dark/Light mode" aria-label="Toggle Dark or Light mode" tabindex="0">🌙</div>
+      <div class="user-icon" aria-label="User Profile" tabindex="0" id="userIcon" aria-haspopup="true" aria-expanded="false" aria-controls="userDropdown">
+        U
+        <div class="user-dropdown" id="userDropdown" role="menu" aria-label="User Menu">
+          <button id="logoutBtn" role="menuitem" tabindex="-1">Log out</button>
+        </div>
+      </div>
+      <div id="usernameDisplay" aria-label="Logged in username"></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside aria-label="Sidebar Navigation" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-item active" data-category="all" tabindex="0" aria-current="page">Home</div>
+        <div class="sidebar-item" data-category="math" tabindex="0">Math</div>
+        <div class="sidebar-item" data-category="science" tabindex="0">Science</div>
+        <div class="sidebar-item" data-category="history" tabindex="0">History</div>
+        <div class="sidebar-item" data-category="language" tabindex="0">Language</div>
+        <div class="sidebar-item" data-category="technology" tabindex="0">Technology</div>
+        <div class="sidebar-item" data-category="art" tabindex="0">Art & Design</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Library</div>
+        <div class="sidebar-item" tabindex="0">History</div>
+        <div class="sidebar-item" tabindex="0">Watch Later</div>
+        <div class="sidebar-item" tabindex="0">Liked Videos</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Subscriptions</div>
+        <div class="sidebar-item" tabindex="0">MathMaster</div>
+        <div class="sidebar-item" tabindex="0">ScienceDaily</div>
+        <div class="sidebar-item" tabindex="0">HistoryNow</div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="trending-row" aria-label="Trending videos">
+        <div class="trending-title">Trending</div>
+        <div class="trending-list" id="trendingList" tabindex="0"></div>
+      </div>
+
+      <div class="sorting-bar" aria-label="Sort videos">
+        <label for="sortSelect" class="sr-only">Sort videos by</label>
+        <select id="sortSelect" aria-controls="videoGrid">
+          <option value="relevance">Sort by: Relevance</option>
+          <option value="date">Sort by: Upload Date</option>
+          <option value="views">Sort by: Views</option>
+        </select>
+      </div>
+
+      <div class="video-grid" id="videoGrid" aria-live="polite" aria-relevant="additions"></div>
+    </main>
+  </div>
+
+  <!-- Video Playback Modal -->
+  <div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close video player" id="modalCloseBtn">&times;</button>
+      <iframe id="videoPlayer" width="100%" height="100%" src="" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal" id="uploadModal" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle" aria-hidden="true" style="opacity:0; pointer-events:none;">
+    <div class="modal-content">
+      <button id="uploadModalClose" aria-label="Close upload modal">&times;</button>
+      <h2 id="uploadModalTitle" style="color:#fff; margin-top:0;">Upload Study Video</h2>
+      <form id="uploadForm">
+        <label for="videoTitle">Title</label>
+        <input type="text" id="videoTitle" name="videoTitle" required placeholder="Video Title" autocomplete="off" />
+        <label for="videoChannel">Channel Name</label>
+        <input type="text" id="videoChannel" name="videoChannel" required placeholder="Channel Name" autocomplete="off" />
+        <label for="videoCategory">Category</label>
+        <select id="videoCategory" name="videoCategory" required>
+          <option value="">Select Category</option>
+          <option value="math">Math</option>
+          <option value="science">Science</option>
+          <option value="history">History</option>
+          <option value="language">Language</option>
+          <option value="technology">Technology</option>
+          <option value="art">Art & Design</option>
+        </select>
+        <label for="videoId">YouTube Video ID</label>
+        <input type="text" id="videoId" name="videoId" required placeholder="YouTube Video ID (e.g. dQw4w9WgXcQ)" autocomplete="off" />
+        <label for="videoDuration">Duration</label>
+        <input type="text" id="videoDuration" name="videoDuration" placeholder="e.g. 5:20" autocomplete="off" />
+        <label for="uploadDate">Upload Date Description</label>
+        <input type="text" id="uploadDate" name="uploadDate" placeholder="e.g. 2 days ago" autocomplete="off" />
+        <button type="submit">Upload Video</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Initial study videos data
+  const videos = [
+    {id: 'uQvKFH3Ps2o',title:'Calculus Basics - Limits Explained',channel:'MathMaster',views:1200000,viewsStr:'1.2M views',category:'math',duration:'10:05',uploadDate:'2 months ago',trending:true},
+    {id: 'X0-XBhZiGlY',title:'Introduction to Quantum Physics',channel:'ScienceDaily',views:800000,viewsStr:'800K views',category:'science',duration:'13:20',uploadDate:'1 month ago',trending:true},
+    {id: '9N17vzfqzQI',title:'World War II Summary',channel:'HistoryNow',views:670000,viewsStr:'670K views',category:'history',duration:'19:45',uploadDate:'3 weeks ago',trending:true},
+    {id: 'O_W-H67-BXM',title:'Spanish for Beginners - Lesson 1',channel:'LanguageCircle',views:430000,viewsStr:'430K views',category:'language',duration:'15:30',uploadDate:'5 days ago',trending:false},
+    {id: 'Lg4H_XWaGfs',title:'Basics of Computer Programming',channel:'TechGeek',views:900000,viewsStr:'900K views',category:'technology',duration:'18:10',uploadDate:'4 weeks ago',trending:true},
+    {id: '0tvmOf7cLKg',title:'Introduction to Modern Art',channel:'ArtVibes',views:220000,viewsStr:'220K views',category:'art',duration:'12:00',uploadDate:'1 month ago',trending:false}
+  ];
+
+  let loggedInUser = null;
+  let currentCategory = 'all';
+
+  const loginPage = document.getElementById('loginPage');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const app = document.getElementById('app');
+  const videoGrid = document.getElementById('videoGrid');
+  const videoModal = document.getElementById('videoModal');
+  const videoPlayer = document.getElementById('videoPlayer');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const sidebarItems = document.querySelectorAll('aside .sidebar-item');
+  const searchInput = document.getElementById('searchInput');
+  const logo = document.querySelector('.logo');
+  const userIcon = document.getElementById('userIcon');
+  const userDropdown = document.getElementById('userDropdown');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const usernameDisplay = document.getElementById('usernameDisplay');
+  const trendingList = document.getElementById('trendingList');
+  const sortSelect = document.getElementById('sortSelect');
+  const colorModeToggle = document.getElementById('colorModeToggle');
+  const notifications = document.getElementById('notifications');
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const uploadBtn = document.getElementById('uploadBtn');
+  const uploadModal = document.getElementById('uploadModal');
+  const uploadModalClose = document.getElementById('uploadModalClose');
+  const uploadForm = document.getElementById('uploadForm');
+
+  // Utility Functions
+  function getThumbnailUrl(id) { return `https://img.youtube.com/vi/${id}/mqdefault.jpg`; }
+  function formatNumber(num) {
+    if (num >= 1e9) return (num/1e9).toFixed(1) + 'B';
+    if (num >= 1e6) return (num/1e6).toFixed(1) + 'M';
+    if (num >= 1e3) return (num/1e3).toFixed(1) + 'K';
+    return num.toString();
+  }
+  function extractYearsAgo(text) {
+    if (!text) return 9999;
+    const match = text.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 9999;
+  }
+
+  // Show/hide upload modal
+  function openUploadModal() {
+    uploadModal.style.opacity = '1';
+    uploadModal.style.pointerEvents = 'auto';
+    uploadForm.reset();
+    document.getElementById('videoTitle').focus();
+  }
+  function closeUploadModal() {
+    uploadModal.style.opacity = '0';
+    uploadModal.style.pointerEvents = 'none';
+    uploadBtn.focus();
+  }
+
+  uploadBtn.addEventListener('click', openUploadModal);
+  uploadModalClose.addEventListener('click', closeUploadModal);
+  uploadModal.addEventListener('click', (e) => {
+    if(e.target === uploadModal) closeUploadModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === "Escape" && uploadModal.style.pointerEvents==='auto') closeUploadModal();
+  });
+
+  // Login
+  window.addEventListener('load', () => {
+    usernameInput.focus();
+    loadColorMode();
+  });
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    loginError.textContent = '';
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    if (!username) { loginError.textContent = 'Please enter your username'; usernameInput.focus(); return;}
+    if (!password) { loginError.textContent = 'Please enter your password'; passwordInput.focus(); return;}
+    loggedInUser = username;
+    showApp();
+  });
+
+  function showApp() {
+    loginPage.style.display = 'none';
+    app.style.display = 'flex';
+    userIcon.textContent = loggedInUser.charAt(0).toUpperCase();
+    usernameDisplay.textContent = loggedInUser;
+    searchInput.value = '';
+    currentCategory = 'all';
+    sidebarItems.forEach(i=>i.classList.remove('active'));
+    sidebarItems[0].classList.add('active');
+    usernameInput.value = ''; passwordInput.value = ''; loginError.textContent = '';
+    usernameInput.blur(); passwordInput.blur();
+    initApp();
+    searchInput.focus();
+  }
+
+  logoutBtn.addEventListener('click', () => {
+    loggedInUser=null;
+    app.style.display='none';
+    loginPage.style.display='flex';
+    userDropdown.classList.remove('show');
+    userIcon.setAttribute('aria-expanded','false');
+    usernameDisplay.textContent='';
+    usernameInput.focus();
+  });
+
+  // User dropdown toggle and accessibility
+  userIcon.addEventListener('click', toggleUserDropdown);
+  userIcon.addEventListener('keydown', (e) => {
+    if(['Enter',' '].includes(e.key)) { e.preventDefault(); toggleUserDropdown(); }
+    else if(e.key==='Escape') { closeUserDropdown(); userIcon.focus(); }
+  });
+  logoutBtn.addEventListener('keydown', (e) => { if(e.key==='Escape'){ closeUserDropdown(); userIcon.focus(); } });
+  function toggleUserDropdown() {
+    let isShown = userDropdown.classList.toggle('show');
+    userIcon.setAttribute('aria-expanded', isShown.toString());
+    if(isShown) logoutBtn.focus();
+  }
+  function closeUserDropdown() {
+    userDropdown.classList.remove('show');
+    userIcon.setAttribute('aria-expanded','false');
+  }
+  document.addEventListener('click', e=>{ if(!userIcon.contains(e.target)) closeUserDropdown(); });
+
+  // Sidebar toggle mobile
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+  hamburger.addEventListener('keydown', e => {
+    if(['Enter',' '].includes(e.key)) {
+      e.preventDefault();
+      sidebar.classList.toggle('open');
+    }
+  });
+  document.addEventListener('click', e => {
+    if(!sidebar.contains(e.target) && !hamburger.contains(e.target) && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // Color Mode (dark/light)
+  function loadColorMode() {
+    const mode = localStorage.getItem('yt-color-mode') || 'dark';
+    if(mode==='light'){
+      document.documentElement.style.setProperty('--bg-color','#f9f9f9');
+      document.body.style.backgroundColor='#f9f9f9';
+      colorModeToggle.textContent='☀️';
+      document.body.style.color='#111';
+    } else {
+      document.documentElement.style.setProperty('--bg-color','#181818');
+      document.body.style.backgroundColor='#181818';
+      colorModeToggle.textContent='🌙';
+      document.body.style.color='#fff';
+    }
+  }
+  function toggleColorMode() {
+    if(document.body.style.backgroundColor==='rgb(24, 24, 24)'){
+      localStorage.setItem('yt-color-mode','light');
+      document.documentElement.style.setProperty('--bg-color','#f9f9f9');
+      document.body.style.backgroundColor='#f9f9f9';
+      document.body.style.color='#111';
+      colorModeToggle.textContent='☀️';
+    } else {
+      localStorage.setItem('yt-color-mode','dark');
+      document.documentElement.style.setProperty('--bg-color','#181818');
+      document.body.style.backgroundColor='#181818';
+      document.body.style.color='#fff';
+      colorModeToggle.textContent='🌙';
+    }
+  }
+  colorModeToggle.addEventListener('click', toggleColorMode);
+  colorModeToggle.addEventListener('keydown', e => {
+    if(['Enter',' '].includes(e.key)) { e.preventDefault(); toggleColorMode(); }
+  });
+
+  // Notifications alerts
+  notifications.addEventListener('click', ()=>alert('No new notifications (Demo)'));
+  notifications.addEventListener('keydown', e => {
+    if(['Enter',' '].includes(e.key)) { e.preventDefault(); alert('No new notifications (Demo)'); }
+  });
+
+  // Render trending videos horizontally
+  function renderTrending() {
+    trendingList.innerHTML = '';
+    const trendingVideos = videos.filter(v => v.trending);
+    trendingVideos.forEach(video=>{
+      const item=document.createElement('div');
+      item.className='trending-item';
+      item.tabIndex=0;
+      item.setAttribute('role','button');
+      item.setAttribute('aria-label', `Play trending video: ${video.title} by ${video.channel}`);
+      item.innerHTML=`
+        <img class="trending-thumb" src="${getThumbnailUrl(video.id)}" alt="Thumbnail of trending video: ${video.title}" />
+        <div class="trending-info">
+          <div class="trending-title-text">${video.title}</div>
+          <div class="trending-channel">${video.channel}</div>
+        </div>
+      `;
+      item.addEventListener('click',()=>openVideo(video.id));
+      item.addEventListener('keydown',e=>{
+        if(['Enter',' '].includes(e.key)){ e.preventDefault(); openVideo(video.id);}
+      });
+      trendingList.appendChild(item);
+    });
+  }
+
+  // Render video grid
+  function renderVideos(videoList) {
+    videoGrid.innerHTML = '';
+    if(videoList.length===0){
+      videoGrid.innerHTML='<p style="color:#aaa;">No videos found.</p>';
+      return;
+    }
+    videoList.forEach(video=>{
+      const card=document.createElement('div');
+      card.className='video-card';
+      card.tabIndex=0;
+      card.setAttribute('role','button');
+      card.setAttribute('aria-label', `Play video: ${video.title} by ${video.channel}`);
+      card.innerHTML=`
+        <img class="thumbnail" src="${getThumbnailUrl(video.id)}" alt="Thumbnail of ${video.title}" />
+        <div class="duration" aria-label="Video duration">${video.duration || '–'}</div>
+        <div class="video-info">
+          <h3 class="video-title">${video.title}</h3>
+          <div class="video-channel">${video.channel}</div>
+          <div class="video-stats">
+            <div class="video-views">${video.viewsStr || formatNumber(video.views)+' views'}</div>
+            <div class="upload-date">${video.uploadDate || ''}</div>
+          </div>
+        </div>
+      `;
+      card.addEventListener('click',()=>openVideo(video.id));
+      card.addEventListener('keydown', e=>{
+        if(['Enter',' '].includes(e.key)){ e.preventDefault(); openVideo(video.id);}
+      });
+      videoGrid.appendChild(card);
+    });
+  }
+
+  // Open video modal
+  function openVideo(id) {
+    videoPlayer.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+    videoModal.classList.add('show');
+    videoModal.setAttribute('aria-hidden','false');
+    modalCloseBtn.focus();
+  }
+  // Close video modal
+  function closeVideo() {
+    videoModal.classList.remove('show');
+    videoModal.setAttribute('aria-hidden','true');
+    videoPlayer.src='';
+  }
+  modalCloseBtn.addEventListener('click',closeVideo);
+  videoModal.addEventListener('click', e=>{if(e.target === videoModal) closeVideo();});
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && videoModal.classList.contains('show')) closeVideo();
+  });
+
+  // Sidebar filtering
+  sidebarItems.forEach(item=>{
+    item.addEventListener('click',()=>{
+      sidebarItems.forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+      currentCategory = item.getAttribute('data-category')||'all';
+      searchInput.value='';
+      filteredAndSortedVideos();
+      closeSidebarOnMobile();
+    });
+    item.addEventListener('keydown', e=>{
+      if(['Enter',' '].includes(e.key)){
+        e.preventDefault();
+        sidebarItems.forEach(i=>i.classList.remove('active'));
+        item.classList.add('active');
+        currentCategory=item.getAttribute('data-category')||'all';
+        searchInput.value='';
+        filteredAndSortedVideos();
+        closeSidebarOnMobile();
+      }
+    });
+  });
+
+  function filteredAndSortedVideos() {
+    let filtered = currentCategory==='all'?videos:videos.filter(v=>v.category===currentCategory);
+    const query = searchInput.value.trim().toLowerCase();
+    if(query){
+      filtered = filtered.filter(v => v.title.toLowerCase().includes(query) || v.channel.toLowerCase().includes(query));
+    }
+    const sortMethod = sortSelect.value;
+    if(sortMethod==='date'){
+      filtered.sort((a,b)=>extractYearsAgo(a.uploadDate)-extractYearsAgo(b.uploadDate));
+    } else if(sortMethod==='views'){
+      filtered.sort((a,b)=>b.views - a.views);
+    }
+    renderVideos(filtered);
+  }
+
+  document.querySelector('.search-bar').addEventListener('submit', e=>{e.preventDefault(); filteredAndSortedVideos();});
+  searchInput.addEventListener('keydown', e=>{if(e.key==='Enter'){e.preventDefault(); filteredAndSortedVideos();}});
+  sortSelect.addEventListener('change',()=>filteredAndSortedVideos());
+  logo.addEventListener('click', ()=>{
+    searchInput.value=''; currentCategory='all';
+    sidebarItems.forEach(i=>i.classList.remove('active'));
+    sidebarItems[0].classList.add('active');
+    sortSelect.value='relevance';
+    filteredAndSortedVideos();
+  });
+
+  function closeSidebarOnMobile() {
+    if(window.innerWidth<=768){
+      sidebar.classList.remove('open');
+      hamburger.focus();
+    }
+  }
+
+  function initialSetup(){
+    renderTrending();
+    filteredAndSortedVideos();
+  }
+
+  function startAppAfterLogin(){ initialSetup(); }
+
+  // Upload form handling
+  uploadForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const title = document.getElementById('videoTitle').value.trim();
+    const channel = document.getElementById('videoChannel').value.trim();
+    const category = document.getElementById('videoCategory').value;
+    const videoId = document.getElementById('videoId').value.trim();
+    const duration = document.getElementById('videoDuration').value.trim() || '–';
+    const uploadDate = document.getElementById('uploadDate').value.trim() || 'Just now';
+    if(!title || !channel || !category || !videoId){
+      alert('Please fill out all required fields!');
+      return;
+    }
+    // Add new video at start, views default 0
+    videos.unshift({id: videoId, title, channel, views: 0, viewsStr:'0 views',category, duration, uploadDate, trending:false});
+    closeUploadModal();
+    // Refresh video grid according to current filters
+    filteredAndSortedVideos();
+  });
+
+</script>
+
+</body>
+</html>
+
