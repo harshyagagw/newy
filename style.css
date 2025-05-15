@@ -400,14 +400,13 @@ main {
   transition: transform 0.2s ease;
 }
 .trending-item:hover, .trending-item:focus-visible {
-  outline: none;
-  transform: scale(1.05);
-  box-shadow: 0 6px 15px rgba(255,0,0,0.7);
+  
+  box-shadow: 0 4px 15px rgba(255,0,0,0.7);
 }
 .trending-thumb {
   width: 100%;
+  height: auto;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
 }
 .trending-info {
   padding: 8px 10px;

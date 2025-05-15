@@ -195,13 +195,27 @@ notifications.addEventListener('keydown', e => {
 function renderTrending() {
   trendingList.innerHTML = '';
   const trendingVideos = videos.filter(v => v.trending);
-  trendingVideos.forEach(video=>{
-    const item=document.createElement('div');
-    item.className='trending-item';
-    item.tabIndex=0;
-    item.setAttribute('role','button');
+  trendingVideos.forEach(video => {
+    const item = document.createElement('div');
+    item.className = 'trending-item';
+    item.tabIndex = 0;
+    item.setAttribute('role', 'button');
     item.setAttribute('aria-label', `Play trending video: ${video.title} by ${video.channel}`);
-    item.innerHTML=`
+    item.innerHTML = `
       <img class="trending-thumb" src="${getThumbnailUrl(video.id)}" alt="Thumbnail of trending video: ${video.title}" />
       <div class="trending-info">
-        <div class="trending
+        <div class="trending-title">${video.title}</div>
+        <div class="trending-channel">${video.channel}</div>
+        <div class="trending-views">${video.viewsStr}</div>
+      </div>
+    `;
+    item.addEventListener('click', () => playVideo(video.id));
+    item.addEventListener('keydown', (e) => {
+      if (['Enter', ' '].includes(e.key)) {
+        e.preventDefault();
+        playVideo(video.id);
+      }
+    });
+    trendingList.appendChild(item);
+  });
+}
